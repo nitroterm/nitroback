@@ -10,7 +10,7 @@ using Nitroterm.Backend.Database;
 namespace Nitroterm.Backend.Migrations
 {
     [DbContext(typeof(NitrotermDbContext))]
-    [Migration("20240307183118_InitialCreate")]
+    [Migration("20240307203722_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

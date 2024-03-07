@@ -1,3 +1,8 @@
+using Nitroterm.Backend.Middleware;
+using Nitroterm.Backend.Utilities;
+
+Secrets.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -24,8 +29,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.MapControllers();
+app.UseHttpsRedirection();
 app.UseCors("cors");
+app.UseMiddleware<JwtMiddleware>();
 
 app.Run();

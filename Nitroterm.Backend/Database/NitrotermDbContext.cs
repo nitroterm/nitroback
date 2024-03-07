@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using Nitroterm.Backend.Database.Models;
+using Nitroterm.Backend.Utilities;
 
 namespace Nitroterm.Backend.Database;
 
@@ -9,6 +10,7 @@ public class NitrotermDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Post> Posts { get; set; }
+    public DbSet<Token> Tokens { get; set; }
     
     public NitrotermDbContext()
     {
@@ -17,14 +19,44 @@ public class NitrotermDbContext : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!File.Exists("connection_string.txt"))
-        {
-            throw new Exception(
-                "No connection string file. Please create a connection_string.txt file next to the program " +
-                "in order to be able to connect to the database");
-        }
+        optionsBuilder.UseMySQL(new MySqlConnection(Secrets.Instance.ConnectionString));
+    }
+
+    public User? GetUser(int id)
+        => Users
+            .Include(user => user.Product)
+            .FirstOrDefault(user => user.Id == id);
+    
+    public User? GetUser(string username) => Users.FirstOrDefault(user => user.Username == username);
+
+    public User? GetUser(string username, string password)
+    {
+        User? user = GetUser(username);
+        if (user == null) return null;
+
+        return user.CheckPassword(password) ? user : null;
+    }
+
+    public User CreateUser(string username, string password)
+    {
+        User user = new() {Username = username};
+        user.SetPassword(password);
+        Users.Add(user);
+
+        SaveChanges();
         
-        optionsBuilder.UseMySQL(
-            new MySqlConnection(File.ReadAllText("connection_string.txt")));
+        return user;
+    }
+
+    public void ExpireUserTokens(User user)
+    {
+        Tokens.RemoveRange(user.Tokens);
+        SaveChanges();
+    }
+
+    public void AddToken(User user, string jti)
+    {
+        Tokens.Add(new Token {UserId = user.Id, Value = jti});
+        SaveChanges();
     }
 }

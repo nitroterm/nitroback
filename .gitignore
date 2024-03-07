@@ -1,5 +1,5 @@
 bin
 obj
 .idea
-connection_string.txt
 private
+secrets.json

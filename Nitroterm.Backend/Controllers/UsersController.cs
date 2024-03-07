@@ -20,11 +20,6 @@ public class UsersController : ControllerBase
         
         if (dbUser == null) return NotFound();
 
-        return new UserDto(dbUser.Id, dbUser.Username,
-            new ProductDto
-            {
-                Id = dbUser.Product.Id, Color = dbUser.Product.Color, Slug = dbUser.Product.Slug,
-                Title = dbUser.Product.Title
-            });
+        return new UserDto(dbUser);
     }
 }
