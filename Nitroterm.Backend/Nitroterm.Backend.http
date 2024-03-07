@@ -1,0 +1,6 @@
+@Nitroterm.Backend_HostAddress = http://localhost:5168
+
+GET {{Nitroterm.Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
