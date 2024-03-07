@@ -6,7 +6,9 @@ namespace Nitroterm.Backend.Database;
 
 public class NitrotermDbContext : DbContext
 {
-    public DbSet<User> Users { get; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Post> Posts { get; set; }
     
     public NitrotermDbContext()
     {
