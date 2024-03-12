@@ -11,12 +11,11 @@ public class NitrotermDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Token> Tokens { get; set; }
-    
+
     public NitrotermDbContext()
     {
-        
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseMySQL(new MySqlConnection(Secrets.Instance.ConnectionString));
@@ -25,9 +24,14 @@ public class NitrotermDbContext : DbContext
     public User? GetUser(int id)
         => Users
             .Include(user => user.Product)
+            .Include(user => user.Tokens)
             .FirstOrDefault(user => user.Id == id);
-    
-    public User? GetUser(string username) => Users.FirstOrDefault(user => user.Username == username);
+
+    public User? GetUser(string username)
+        => Users
+            .Include(user => user.Product)
+            .Include(user => user.Tokens)
+            .FirstOrDefault(user => user.Username == username);
 
     public User? GetUser(string username, string password)
     {
@@ -44,7 +48,7 @@ public class NitrotermDbContext : DbContext
         Users.Add(user);
 
         SaveChanges();
-        
+
         return user;
     }
 
