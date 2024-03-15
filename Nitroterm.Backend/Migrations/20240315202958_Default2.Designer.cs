@@ -11,8 +11,8 @@ using Nitroterm.Backend.Database;
 namespace Nitroterm.Backend.Migrations
 {
     [DbContext(typeof(NitrotermDbContext))]
-    [Migration("20240307220127_AuthSystem")]
-    partial class AuthSystem
+    [Migration("20240315202958_Default2")]
+    partial class Default2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,9 @@ namespace Nitroterm.Backend.Migrations
                     b.Property<int>("NitroLevel")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("PublicIdentifier")
+                        .HasColumnType("char(36)");
+
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
 
@@ -43,6 +46,25 @@ namespace Nitroterm.Backend.Migrations
                     b.HasIndex("SenderId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Nitroterm.Backend.Database.Models.PostUserInteraction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostUserInteractions");
                 });
 
             modelBuilder.Entity("Nitroterm.Backend.Database.Models.Product", b =>
@@ -93,6 +115,9 @@ namespace Nitroterm.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int>("NitroLevel")
+                        .HasColumnType("int");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -115,6 +140,25 @@ namespace Nitroterm.Backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Nitroterm.Backend.Database.Models.UserToUserInteraction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserToUserInteractions");
+                });
+
             modelBuilder.Entity("Nitroterm.Backend.Database.Models.Post", b =>
                 {
                     b.HasOne("Nitroterm.Backend.Database.Models.User", "Sender")
@@ -124,6 +168,17 @@ namespace Nitroterm.Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("Nitroterm.Backend.Database.Models.PostUserInteraction", b =>
+                {
+                    b.HasOne("Nitroterm.Backend.Database.Models.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Nitroterm.Backend.Database.Models.Token", b =>
@@ -142,6 +197,17 @@ namespace Nitroterm.Backend.Migrations
                         .HasForeignKey("ProductId");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Nitroterm.Backend.Database.Models.UserToUserInteraction", b =>
+                {
+                    b.HasOne("Nitroterm.Backend.Database.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Nitroterm.Backend.Database.Models.User", b =>

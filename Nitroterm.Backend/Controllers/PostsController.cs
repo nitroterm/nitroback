@@ -57,4 +57,58 @@ public class PostsController : ControllerBase
         
         return Ok(new ResultDto<PostDto>(new PostDto(post)));
     }
+
+    [HttpGet("{id:guid}/nitro")]
+    [Authorize]
+    public object NitroPost(Guid id)
+    {
+        using NitrotermDbContext db = new();
+
+        User user = this.GetUser()!;
+        Post? post = db.GetPost(id);
+        if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
+        if (post.IsNitronizedByUser(db, user))
+            return BadRequest(new ErrorResultDto("already_set", "message already nitronized"));
+
+        // TODO: Fix interactions not saving in database
+        PostUserInteraction interaction = new()
+        {
+            Id = user.Id, 
+            Post = post, 
+            Type = PostUserInteractionType.Nitronize
+        };
+        post.NitroLevel++;
+
+        db.UpdateRange(post, interaction);
+        db.SaveChanges();
+        
+        return Ok(new ResultDto<PostDto>(new PostDto(post)));
+    }
+
+    [HttpGet("{id:guid}/dynamite")]
+    [Authorize]
+    public object DynamitePost(Guid id)
+    {
+        using NitrotermDbContext db = new();
+
+        User user = this.GetUser()!;
+        Post? post = db.GetPost(id);
+        if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
+        if (post.IsDynamitedByUser(db, user))
+            return BadRequest(new ErrorResultDto("already_set", "message already dynamited"));
+
+        // TODO: Fix interactions not saving in database
+        PostUserInteraction interaction = new()
+        {
+            Id = user.Id, 
+            Post = post, 
+            Type = PostUserInteractionType.Dynamite
+        };
+        post.NitroLevel--;
+
+        db.UpdateRange(post, interaction);
+        db.SaveChanges();
+        
+        return Ok(new ResultDto<PostDto>(new PostDto(post)));
+    }
 }
