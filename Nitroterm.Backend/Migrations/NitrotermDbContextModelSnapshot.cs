@@ -32,6 +32,9 @@ namespace Nitroterm.Backend.Migrations
                     b.Property<int>("NitroLevel")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("PublicIdentifier")
+                        .HasColumnType("char(36)");
+
                     b.Property<int>("SenderId")
                         .HasColumnType("int");
 
@@ -88,6 +91,9 @@ namespace Nitroterm.Backend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("NitroLevel")
                         .HasColumnType("int");
 
                     b.Property<string>("Password")

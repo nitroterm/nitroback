@@ -22,12 +22,12 @@ public class ResultDto<T> : ResultDto
 public class ErrorResultDto : ResultDto
 {
     public override bool Success => false;
-    public string ErrorCode { get; set; }
+    public string Slug { get; set; }
     public string Message { get; set; }
 
-    public ErrorResultDto(string code, string message)
+    public ErrorResultDto(string slug, string message)
     {
-        ErrorCode = code;
+        Slug = slug;
         Message = message;
     }
 }

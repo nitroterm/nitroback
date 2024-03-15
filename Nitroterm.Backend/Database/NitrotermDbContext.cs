@@ -33,6 +33,16 @@ public class NitrotermDbContext : DbContext
             .Include(user => user.Tokens)
             .FirstOrDefault(user => user.Username == username);
 
+    public Post? GetPost(Guid publicId)
+        => Posts
+            .Include(post => post.Sender)
+            .FirstOrDefault(user => user.PublicIdentifier == publicId);
+
+    public Post? GetPost(int id)
+        => Posts
+            .Include(post => post.Sender)
+            .FirstOrDefault(user => user.Id == id);
+
     public User? GetUser(string username, string password)
     {
         User? user = GetUser(username);

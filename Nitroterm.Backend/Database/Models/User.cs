@@ -14,6 +14,7 @@ public class User
     public string Salt { get; set; }
     public Product? Product { get; set; }
     public List<Token> Tokens { get; set; }
+    public int NitroLevel { get; set; }
 
     public bool IsTokenJtiValid(string jti)
         => Tokens.Any(token => token.Value == jti);
