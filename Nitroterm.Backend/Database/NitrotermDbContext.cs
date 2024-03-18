@@ -11,7 +11,6 @@ public class NitrotermDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<Token> Tokens { get; set; }
-    public DbSet<PostUserInteraction> PostUserInteractions { get; set; }
     public DbSet<UserToUserInteraction> UserToUserInteractions { get; set; }
 
     public NitrotermDbContext()
@@ -44,11 +43,6 @@ public class NitrotermDbContext : DbContext
         => Posts
             .Include(post => post.Sender)
             .FirstOrDefault(user => user.Id == id);
-
-    public PostUserInteraction? GetInteractionsForPost(User owner, Post post)
-        => PostUserInteractions
-            .Include(pui => pui.Post)
-            .FirstOrDefault(pui => pui.Id == owner.Id && pui.Post == post);
 
     public UserToUserInteraction? GetInteractionsForUser(User owner, User user)
         => UserToUserInteractions
