@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nitroterm.Backend.Database;
@@ -11,8 +12,8 @@ using Nitroterm.Backend.Database;
 namespace Nitroterm.Backend.Migrations
 {
     [DbContext(typeof(NitrotermDbContext))]
-    [Migration("20240315202958_Default2")]
-    partial class Default2
+    [Migration("20240319154433_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,11 +23,15 @@ namespace Nitroterm.Backend.Migrations
                 .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
             modelBuilder.Entity("Nitroterm.Backend.Database.Models.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -48,30 +53,13 @@ namespace Nitroterm.Backend.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("Nitroterm.Backend.Database.Models.PostUserInteraction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("PostUserInteractions");
-                });
-
             modelBuilder.Entity("Nitroterm.Backend.Database.Models.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<uint>("Color")
                         .HasColumnType("int unsigned");
@@ -95,6 +83,8 @@ namespace Nitroterm.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -114,6 +104,8 @@ namespace Nitroterm.Backend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("NitroLevel")
                         .HasColumnType("int");
@@ -146,6 +138,8 @@ namespace Nitroterm.Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
@@ -168,17 +162,6 @@ namespace Nitroterm.Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("Nitroterm.Backend.Database.Models.PostUserInteraction", b =>
-                {
-                    b.HasOne("Nitroterm.Backend.Database.Models.Post", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Nitroterm.Backend.Database.Models.Token", b =>
