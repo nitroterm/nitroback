@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
 using Nitroterm.Backend.Database.Models;
 using Nitroterm.Backend.Utilities;
 
@@ -19,7 +18,7 @@ public class NitrotermDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySQL(new MySqlConnection(Secrets.Instance.ConnectionString));
+        optionsBuilder.UseMySql(Secrets.Instance.ConnectionString, new MariaDbServerVersion("11.3.2"));
     }
 
     public User? GetUser(int id)

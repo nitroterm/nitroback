@@ -1,45 +1,50 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
 namespace Nitroterm.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class Default2 : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("MySQL:Charset", "utf8mb4");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Slug = table.Column<string>(type: "longtext", nullable: false),
-                    Title = table.Column<string>(type: "longtext", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Slug = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Title = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Color = table.Column<uint>(type: "int unsigned", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Username = table.Column<string>(type: "longtext", nullable: false),
-                    Password = table.Column<string>(type: "longtext", nullable: false),
-                    Salt = table.Column<string>(type: "longtext", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Username = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Password = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Salt = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     ProductId = table.Column<int>(type: "int", nullable: true),
                     NitroLevel = table.Column<int>(type: "int", nullable: false)
                 },
@@ -52,17 +57,18 @@ namespace Nitroterm.Backend.Migrations
                         principalTable: "Products",
                         principalColumn: "Id");
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Posts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    PublicIdentifier = table.Column<Guid>(type: "char(36)", nullable: false),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PublicIdentifier = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     SenderId = table.Column<int>(type: "int", nullable: false),
-                    Message = table.Column<string>(type: "longtext", nullable: false),
+                    Message = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     NitroLevel = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -75,16 +81,17 @@ namespace Nitroterm.Backend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Tokens",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -96,14 +103,14 @@ namespace Nitroterm.Backend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "UserToUserInteractions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false)
                 },
@@ -117,33 +124,7 @@ namespace Nitroterm.Backend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "PostUserInteractions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    PostId = table.Column<int>(type: "int", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostUserInteractions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PostUserInteractions_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostUserInteractions_PostId",
-                table: "PostUserInteractions",
-                column: "PostId");
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_SenderId",
@@ -170,16 +151,13 @@ namespace Nitroterm.Backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "PostUserInteractions");
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Tokens");
 
             migrationBuilder.DropTable(
                 name: "UserToUserInteractions");
-
-            migrationBuilder.DropTable(
-                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Users");
