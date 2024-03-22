@@ -10,10 +10,10 @@ using Nitroterm.Backend.Utilities;
 namespace Nitroterm.Backend.Controllers;
 
 [ApiController]
-[Route("/api/v1/posts")]
+[Route("/api/nitroterm/v1/posts")]
 public class PostsController : ControllerBase
 {
-    [HttpPost("/api/v1/post")]
+    [HttpPost("/api/nitroterm/v1/post")]
     [Authorize]
     public object CreatePost([FromBody] PostCreationDto postDto)
     {

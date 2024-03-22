@@ -8,7 +8,7 @@ using Nitroterm.Backend.Utilities;
 namespace Nitroterm.Backend.Controllers;
 
 [ApiController]
-[Route("/api/v1/auth")]
+[Route("/api/nitroterm/v1/auth")]
 public class AuthController : ControllerBase
 {
     [HttpGet("validate")]

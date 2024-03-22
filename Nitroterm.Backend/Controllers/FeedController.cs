@@ -8,7 +8,7 @@ using Nitroterm.Backend.Utilities;
 namespace Nitroterm.Backend.Controllers;
 
 [ApiController]
-[Route("/api/v1/feed")]
+[Route("/api/nitroterm/v1/feed")]
 public class FeedController : ControllerBase
 {
     [HttpGet]

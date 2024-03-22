@@ -7,10 +7,10 @@ using Nitroterm.Backend.Dto;
 namespace Nitroterm.Backend.Controllers;
 
 [ApiController]
-[Route("/api/v1/users")]
+[Route("/api/nitroterm/v1/users")]
 public class UsersController : ControllerBase
 {
-    [HttpGet("/api/v1/user/{id:int}")]
+    [HttpGet("/api/nitroterm/v1/user/{id:int}")]
     [Authorize]
     public object Get(int id)
     {
