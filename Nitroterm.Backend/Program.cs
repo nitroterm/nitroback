@@ -1,8 +1,20 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Middleware;
 using Nitroterm.Backend.Utilities;
 
 Secrets.Load();
+
+try
+{
+    using NitrotermDbContext db = new();
+    db.Database.Migrate();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e);
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
