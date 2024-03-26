@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Nitroterm.Backend.Database.Models;
+using Nitroterm.Backend.Dto;
 
 namespace Nitroterm.Backend.Attributes;
 
@@ -9,11 +10,13 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        User? user = (User?)context.HttpContext.Items["User"];
-        
-        if (user == null)
+        User? user = (User?) context.HttpContext.Items["User"];
+        if (user != null) return;
+
+        context.Result = new JsonResult(
+            new ErrorResultDto("unauthorized", "You need to be logged in to access this resource"))
         {
-            context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
-        }
+            StatusCode = StatusCodes.Status401Unauthorized
+        };
     }
 }

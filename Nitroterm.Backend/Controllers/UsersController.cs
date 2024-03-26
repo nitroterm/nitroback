@@ -20,7 +20,7 @@ public class UsersController : ControllerBase
             .Include(user => user.Product)
             .FirstOrDefault(user => user.Id == id);
         
-        if (dbUser == null) return NotFound();
+        if (dbUser == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
 
         return new UserDto(dbUser);
     }

@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
         using NitrotermDbContext db = new();
 
         User? existingUser = db.Users.FirstOrDefault(user => user.Username == dto.Username);
-        if (existingUser != null) return BadRequest("user already exists");
+        if (existingUser != null) return BadRequest(new ErrorResultDto("already_exists", "user already exists"));
 
         User user = db.CreateUser(dto.Username, dto.Password);
 
@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
         using NitrotermDbContext db = new();
 
         User? existingUser = db.GetUser(dto.Username, dto.Password);
-        if (existingUser == null) return BadRequest("user does not exist or password is invalid");
+        if (existingUser == null) return BadRequest(new ErrorResultDto("user_login_error", "user does not exist or password is invalid"));
 
         string token = existingUser.IssueJwtToken(db);
         db.Update(existingUser);
@@ -55,8 +55,8 @@ public class AuthController : ControllerBase
         using NitrotermDbContext db = new();
 
         User? existingUser = this.GetUser();
-        if (existingUser == null) return BadRequest("cannot find user");
-        if (!existingUser.CheckPassword(dto.Current)) return BadRequest("invalid password");
+        if (existingUser == null || !existingUser.CheckPassword(dto.Current)) 
+            return BadRequest(new ErrorResultDto("user_login_error", "user does not exist or password is invalid"));
         
         existingUser.SetPassword(dto.New);
         db.ExpireUserTokens(existingUser);
@@ -74,7 +74,7 @@ public class AuthController : ControllerBase
         using NitrotermDbContext db = new();
 
         User? existingUser = this.GetUser();
-        if (existingUser == null) return BadRequest("cannot find user");
+        if (existingUser == null) return BadRequest(new ErrorResultDto("user_login_error", "user does not exist"));
         
         db.ExpireUserTokens(existingUser);
 
