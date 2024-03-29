@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Nitroterm.Backend.Attributes;
 using Nitroterm.Backend.Database;
+using Nitroterm.Backend.Database.Models;
 using Nitroterm.Backend.Dto;
+using Nitroterm.Backend.Utilities;
 
 namespace Nitroterm.Backend.Controllers;
 
@@ -22,6 +24,29 @@ public class UsersController : ControllerBase
         
         if (dbUser == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
 
-        return new UserDto(dbUser);
+        return new ResultDto<UserDto>(new UserDto(dbUser));
+    }
+
+    [HttpPut("/api/nitroterm/v1/user")]
+    [Authorize]
+    public object Put([FromBody] UserEditDto dto)
+    {
+        using NitrotermDbContext db = new();
+        User user = this.GetUser()!;
+
+        if (!string.IsNullOrWhiteSpace(dto.Username))
+        {
+            if (db.Users.Any(u => u.Username == dto.Username))
+                return new ErrorResultDto("already_taken", "username is already taken");
+            
+            user.Username = dto.Username;
+        }
+        if (!string.IsNullOrWhiteSpace(dto.Bio)) user.Bio = dto.Bio;
+        if (dto.ProductId != null) user.Product = db.Products.Find(dto.ProductId!);
+
+        db.Update(user);
+        db.SaveChanges();
+
+        return new ResultDto<UserDto>(new UserDto(user));
     }
 }
