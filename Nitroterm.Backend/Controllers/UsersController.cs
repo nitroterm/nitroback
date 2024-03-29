@@ -18,7 +18,7 @@ public class UsersController : ControllerBase
     {
         using NitrotermDbContext db = new();
 
-        Database.Models.User? dbUser = db.Users
+        User? dbUser = db.Users
             .Include(user => user.Product)
             .FirstOrDefault(user => user.Id == id);
         
@@ -36,7 +36,7 @@ public class UsersController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(dto.Username))
         {
-            if (db.Users.Any(u => u.Username == dto.Username))
+            if (db.Users.Any(u => u.Username == dto.Username && u.Id != user.Id))
                 return new ErrorResultDto("already_taken", "username is already taken");
             
             user.Username = dto.Username;
