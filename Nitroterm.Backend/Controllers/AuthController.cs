@@ -29,8 +29,11 @@ public class AuthController : ControllerBase
         if (existingUser != null) return BadRequest(new ErrorResultDto("already_exists", "user already exists"));
 
         User user = db.CreateUser(dto.Username, dto.Password);
+        string token = user.IssueJwtToken(db);
+        db.Update(user);
+        db.SaveChanges();
 
-        return Ok(new ResultDto<UserDto>(new UserDto(user)));
+        return Ok(new ResultDto<LoginResponseDto>(new LoginResponseDto(new UserDto(user), token)));
     }
     
     [HttpPost("login")]

@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Database.Models;
+using Nitroterm.Backend.Dto;
 using Nitroterm.Backend.Utilities;
 
 namespace Nitroterm.Backend.Middleware;
@@ -21,7 +22,10 @@ public class JwtMiddleware
         string[]? authParts = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ");
         //if (authParts == null || authParts[0] != "Bearer") return;
 
-        if (authParts != null && authParts.Length == 2) await ValidateToken(context, authParts[1]);
+        if (authParts != null && authParts.Length == 2)
+        {
+            if (!await ValidateToken(context, authParts[1])) return;
+        }
 
         await _next(context);
     }
@@ -55,8 +59,10 @@ public class JwtMiddleware
         }
         catch (Exception e)
         {
-            throw;
-            
+            context.Response.StatusCode = 401;
+            await context.Response.WriteAsJsonAsync(new ErrorResultDto("invalid_token", 
+                "provided token is invalid or expired"));
+
             return false;
         }
     }
