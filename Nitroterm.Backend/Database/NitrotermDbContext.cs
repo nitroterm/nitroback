@@ -58,8 +58,8 @@ public class NitrotermDbContext : DbContext
 
     public User CreateUser(string username, string password)
     {
-        User user = new() {Username = username};
-        user.SetPassword(password);
+        User user = new() {Username = username.Trim()};
+        user.SetPassword(password.Trim());
         Users.Add(user);
 
         SaveChanges();

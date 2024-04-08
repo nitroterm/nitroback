@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Nitroterm.Backend.Attributes;
 using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Database.Models;
@@ -24,6 +25,9 @@ public class AuthController : ControllerBase
     public object Register([FromBody] LoginDto dto)
     {
         using NitrotermDbContext db = new();
+
+        if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
+            return BadRequest(new ErrorResultDto("format_error", "username or/and password are empty"));
 
         User? existingUser = db.Users.FirstOrDefault(user => user.Username == dto.Username);
         if (existingUser != null) return BadRequest(new ErrorResultDto("already_exists", "user already exists"));
