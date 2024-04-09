@@ -38,7 +38,8 @@ public class PostsController : ControllerBase
         {
             PublicIdentifier = Guid.NewGuid(),
             Message = postDto.Contents,
-            Sender = user
+            Sender = user,
+            CreationTimestamp = DateTime.Now
         };
         post.NitroLevel = AlgorithmManager.DeduceInitialNitroLevelForPost(post, user);
 
@@ -73,7 +74,8 @@ public class PostsController : ControllerBase
         if (!string.IsNullOrWhiteSpace(dto.Contents))
         {
             post.Message = dto.Contents;
-            // TODO: mark post as edited
+            post.LastEditionTimestamp = DateTime.Now;
+            post.Edited = true;
         }
 
         db.Update(post);

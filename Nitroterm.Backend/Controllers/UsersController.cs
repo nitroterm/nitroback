@@ -34,14 +34,24 @@ public class UsersController : ControllerBase
         using NitrotermDbContext db = new();
         User user = this.GetUser()!;
 
-        if (!string.IsNullOrWhiteSpace(dto.Username))
+        if (!string.IsNullOrWhiteSpace(dto.DisplayName))
         {
-            if (db.Users.Any(u => u.Username == dto.Username && u.Id != user.Id))
-                return new ErrorResultDto("already_taken", "username is already taken");
+            if (db.Users.Any(u => u.DisplayName == dto.DisplayName && u.Id != user.Id))
+                return BadRequest(new ErrorResultDto("already_taken", "username is already taken"));
             
-            user.Username = dto.Username;
+            user.DisplayName = dto.DisplayName;
         }
-        if (!string.IsNullOrWhiteSpace(dto.Bio)) user.Bio = dto.Bio;
+
+        if (!string.IsNullOrWhiteSpace(dto.Bio))
+        {
+            if (dto.Bio!.Length > 4000)
+            {
+                return BadRequest(new ErrorResultDto("too_large",
+                    "bio length must be less than 4000 characters"));
+            }
+            
+            user.Bio = dto.Bio;
+        }
         if (dto.ProductId != null) user.Product = db.Products.Find(dto.ProductId!);
 
         db.Update(user);

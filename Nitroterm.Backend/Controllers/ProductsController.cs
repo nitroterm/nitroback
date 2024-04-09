@@ -4,6 +4,7 @@ using Nitroterm.Backend.Attributes;
 using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Database.Models;
 using Nitroterm.Backend.Dto;
+using Nitroterm.Backend.Utilities;
 
 namespace Nitroterm.Backend.Controllers;
 
@@ -11,6 +12,32 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/products")]
 public class ProductsController : ControllerBase
 {
+    [HttpPost("/api/nitroterm/v1/products")]
+    [Authorize]
+    public object Create([FromBody] ProductEditDto dto)
+    {
+        using NitrotermDbContext db = new();
+        User user = this.GetUser()!;
+        if (user.Level < UserExecutionLevel.Administrator) return NotFound();
+
+        if (db.Products.Any(product => product.Slug == dto.Slug)) 
+            return NotFound(new ErrorResultDto("already_exists", "product already exists (slug)"));
+        if (db.Products.Any(product => product.Title == dto.Title)) 
+            return NotFound(new ErrorResultDto("not_found", "product already exists (title)"));
+
+        Product product = new()
+        {
+            Slug = dto.Slug,
+            Title = dto.Title,
+            Color = dto.Color ?? 0xFF000000
+        };
+
+        db.Products.Add(product);
+        db.SaveChanges();
+
+        return new ResultDto<ProductDto?>(new ProductDto(product));
+    }
+    
     [HttpGet("/api/nitroterm/v1/product/{id:int}")]
     [Authorize]
     public object Get(int id)

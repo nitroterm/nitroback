@@ -16,6 +16,10 @@ public class User
     public Product? Product { get; set; }
     public List<Token> Tokens { get; set; }
     public int NitroLevel { get; set; }
+    public string? DisplayName { get; set; }
+    public DateTime CreationTimestamp { get; set; }
+    public DateTime? LatestLoginTimestamp { get; set; }
+    public UserExecutionLevel Level { get; set; }
 
     public bool IsTokenJtiValid(string jti)
         => Tokens.Any(token => token.Value == jti);
@@ -54,4 +58,10 @@ public class User
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+}
+
+public enum UserExecutionLevel
+{
+    User,
+    Administrator
 }

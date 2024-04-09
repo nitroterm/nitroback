@@ -7,4 +7,7 @@ public class Post
     public User Sender { get; set; }
     public string Message { get; set; }
     public int NitroLevel { get; set; }
+    public DateTime CreationTimestamp { get; set; }
+    public DateTime? LastEditionTimestamp { get; set; }
+    public bool Edited { get; set; }
 }

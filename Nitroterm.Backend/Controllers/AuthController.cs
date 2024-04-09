@@ -52,6 +52,8 @@ public class AuthController : ControllerBase
         if (existingUser == null) return BadRequest(new ErrorResultDto("user_login_error", "user does not exist or password is invalid"));
 
         string token = existingUser.IssueJwtToken(db);
+        existingUser.LatestLoginTimestamp = DateTime.Now;
+        
         db.Update(existingUser);
         db.SaveChanges();
 
