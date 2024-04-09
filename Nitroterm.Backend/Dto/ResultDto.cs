@@ -11,9 +11,14 @@ public abstract class ResultDto
 public class ResultDto<T> : ResultDto
 {
     public override bool Success => true;
-    public T Data { get; set; }
+    public T? Data { get; set; }
 
-    public ResultDto(T data)
+    public ResultDto()
+    {
+        Data = default;
+    }
+
+    public ResultDto(T? data)
     {
         Data = data;
     }

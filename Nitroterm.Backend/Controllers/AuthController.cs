@@ -18,7 +18,7 @@ public class AuthController : ControllerBase
     {
         User? user = this.GetUser()!;
         
-        return Ok(new ResultDto<UserDto>(new UserDto(user)));
+        return Ok(new ResultDto<UserDto?>(new UserDto(user)));
     }
     
     [HttpPost("register")]
@@ -28,6 +28,9 @@ public class AuthController : ControllerBase
 
         if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
             return BadRequest(new ErrorResultDto("format_error", "username or/and password are empty"));
+        
+        if (dto.Password.Length < 5)
+            return BadRequest(new ErrorResultDto("format_error", "password must have at least 5 characters"));
 
         User? existingUser = db.Users.FirstOrDefault(user => user.Username == dto.Username);
         if (existingUser != null) return BadRequest(new ErrorResultDto("already_exists", "user already exists"));
@@ -37,7 +40,7 @@ public class AuthController : ControllerBase
         db.Update(user);
         db.SaveChanges();
 
-        return Ok(new ResultDto<LoginResponseDto>(new LoginResponseDto(new UserDto(user), token)));
+        return Ok(new ResultDto<LoginResponseDto?>(new LoginResponseDto(new UserDto(user), token)));
     }
     
     [HttpPost("login")]
@@ -52,7 +55,7 @@ public class AuthController : ControllerBase
         db.Update(existingUser);
         db.SaveChanges();
 
-        return Ok(new ResultDto<LoginResponseDto>(new LoginResponseDto(new UserDto(existingUser), token)));
+        return Ok(new ResultDto<LoginResponseDto?>(new LoginResponseDto(new UserDto(existingUser), token)));
     }
     
     [HttpPost("password")]
@@ -85,9 +88,6 @@ public class AuthController : ControllerBase
         
         db.ExpireUserTokens(existingUser);
 
-        db.Update(existingUser);
-        db.SaveChanges();
-
-        return Ok(new ResultDto<string>("ok"));
+        return Ok(new ResultDto<string>());
     }
 }

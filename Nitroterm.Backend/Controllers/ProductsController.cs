@@ -20,7 +20,7 @@ public class ProductsController : ControllerBase
         Product? product = db.Products.Find(id);
         if (product == null) return NotFound(new ErrorResultDto("not_found", "product not found"));
 
-        return new ResultDto<ProductDto>(new ProductDto(product));
+        return new ResultDto<ProductDto?>(new ProductDto(product));
     }
 
     [HttpGet]
@@ -31,7 +31,7 @@ public class ProductsController : ControllerBase
 
         Product[] products = db.Products.Take(10).ToArray();
 
-        return new ResultDto<Product[]>(products);
+        return new ResultDto<Product[]?>(products);
     }
 
     [HttpGet("/api/nitroterm/v1/products/query/{input}")]
@@ -43,6 +43,6 @@ public class ProductsController : ControllerBase
         Product[] products = db.Products.Where(product => product.Title.ToLower().Contains(input.ToLower().Trim()))
             .Take(10).ToArray();
 
-        return new ResultDto<Product[]>(products);
+        return new ResultDto<Product[]?>(products);
     }
 }

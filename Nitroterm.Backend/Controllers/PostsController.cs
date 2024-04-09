@@ -45,7 +45,7 @@ public class PostsController : ControllerBase
         db.Posts.Update(post);
         db.SaveChanges();
 
-        return Ok(new ResultDto<PostDto>(new PostDto(post)));
+        return Ok(new ResultDto<PostDto?>(new PostDto(post)));
     }
 
     [HttpGet("{id:guid}")]
@@ -56,6 +56,46 @@ public class PostsController : ControllerBase
         Post? post = db.GetPost(id);
         if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
 
-        return Ok(new ResultDto<PostDto>(new PostDto(post)));
+        return Ok(new ResultDto<PostDto?>(new PostDto(post)));
+    }
+
+    [HttpPut("{id:guid}")]
+    [Authorize]
+    public object Put(Guid id, [FromBody] PostCreationDto dto)
+    {
+        using NitrotermDbContext db = new();
+        User user = this.GetUser()!;
+        
+        Post? post = db.GetPost(id);
+        if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
+        if (post.Sender.Id != user.Id) return NotFound(new ErrorResultDto("unauthorized", "this post doesn't belong to you"));
+
+        if (!string.IsNullOrWhiteSpace(dto.Contents))
+        {
+            post.Message = dto.Contents;
+            // TODO: mark post as edited
+        }
+
+        db.Update(post);
+        db.SaveChanges();
+        
+        return new ResultDto<PostDto?>(new PostDto(post));
+    }
+
+    [HttpDelete("{id:guid}")]
+    [Authorize]
+    public object Delete(Guid id)
+    {
+        using NitrotermDbContext db = new();
+        User user = this.GetUser()!;
+        
+        Post? post = db.GetPost(id);
+        if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
+        if (post.Sender.Id != user.Id) return NotFound(new ErrorResultDto("unauthorized", "this post doesn't belong to you"));
+
+        db.Remove(post);
+        db.SaveChanges();
+        
+        return new ResultDto<PostDto?>(new PostDto(post));
     }
 }

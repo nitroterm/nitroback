@@ -1,5 +1,7 @@
-﻿using Nitroterm.Backend.Database;
+﻿using Microsoft.EntityFrameworkCore;
+using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Database.Models;
+using Nitroterm.Backend.Dto;
 
 namespace Nitroterm.Backend.Algorithm;
 
@@ -13,8 +15,9 @@ public static class AlgorithmManager
     public static Post[] DeduceBestPostsForUser(User user, int count)
     {
         using NitrotermDbContext db = new();
-        
+
         return db.Posts
+            .Include(post => post.Sender)
             .Where(post => post.Sender != user)
             .Take(count)
             .OrderByDescending(post => post.NitroLevel)

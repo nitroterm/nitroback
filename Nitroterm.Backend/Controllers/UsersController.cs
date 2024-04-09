@@ -24,7 +24,7 @@ public class UsersController : ControllerBase
         
         if (dbUser == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
 
-        return new ResultDto<UserDto>(new UserDto(dbUser));
+        return new ResultDto<UserDto?>(new UserDto(dbUser));
     }
 
     [HttpPut("/api/nitroterm/v1/user")]
@@ -47,6 +47,6 @@ public class UsersController : ControllerBase
         db.Update(user);
         db.SaveChanges();
 
-        return new ResultDto<UserDto>(new UserDto(user));
+        return new ResultDto<UserDto?>(new UserDto(user));
     }
 }

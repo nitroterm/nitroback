@@ -15,6 +15,7 @@ public class FeedController : ControllerBase
     [Authorize]
     public object Get()
     {
-        return new ResultDto<Post[]>(AlgorithmManager.DeduceBestPostsForUser(this.GetUser()!, 15));
+        return new ResultDto<PostDto[]?>(AlgorithmManager.DeduceBestPostsForUser(this.GetUser()!, 15)
+            .Select(post => new PostDto(post)).ToArray());
     }
 }
