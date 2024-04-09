@@ -8,4 +8,7 @@ public class PostDto(Post post)
     public UserDto Sender { get; set; } = new(post.Sender);
     public string Message { get; set; } = post.Message;
     public int NitroLevel { get; set; } = post.NitroLevel;
+    public bool Edited { get; set; } = post.Edited;
+    public DateTime CreationDate { get; set; } = post.CreationTimestamp;
+    public DateTime? EditionDate { get; set; } = post.LastEditionTimestamp;
 }
