@@ -20,6 +20,12 @@ public class ProductsController : ControllerBase
         User user = this.GetUser()!;
         if (user.Level < UserExecutionLevel.Administrator) return NotFound();
 
+        if (!Utilities.Utilities.CheckUsername(dto.Slug))
+            return NotFound(new ErrorResultDto("format_error", "product slug format error : must be lowercase"));
+
+        if (!Utilities.Utilities.CheckUserContent(dto.Title))
+            return NotFound(new ErrorResultDto("format_error", "product name format error : must be less than 4000 characters"));
+        
         if (db.Products.Any(product => product.Slug == dto.Slug)) 
             return NotFound(new ErrorResultDto("already_exists", "product already exists (slug)"));
         if (db.Products.Any(product => product.Title == dto.Title)) 

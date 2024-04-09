@@ -12,15 +12,15 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/users")]
 public class UsersController : ControllerBase
 {
-    [HttpGet("/api/nitroterm/v1/user/{id:int}")]
+    [HttpGet("/api/nitroterm/v1/user/{username}")]
     [Authorize]
-    public object Get(int id)
+    public object Get(string username)
     {
         using NitrotermDbContext db = new();
 
         User? dbUser = db.Users
             .Include(user => user.Product)
-            .FirstOrDefault(user => user.Id == id);
+            .FirstOrDefault(user => user.Username == username);
         
         if (dbUser == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
 
@@ -38,6 +38,9 @@ public class UsersController : ControllerBase
         {
             if (db.Users.Any(u => u.DisplayName == dto.DisplayName && u.Id != user.Id))
                 return BadRequest(new ErrorResultDto("already_taken", "username is already taken"));
+            
+            if (!Utilities.Utilities.CheckDisplayName(dto.DisplayName))
+                return BadRequest(new ErrorResultDto("format_error", "invalid display name format"));
             
             user.DisplayName = dto.DisplayName;
         }

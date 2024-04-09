@@ -29,6 +29,15 @@ public class AuthController : ControllerBase
         if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
             return BadRequest(new ErrorResultDto("format_error", "username or/and password are empty"));
         
+        if (!Utilities.Utilities.CheckUsername(dto.Username))
+            return BadRequest(new ErrorResultDto("format_error", "invalid username format : username" +
+                                                                 " must be lowercase, must be less than 30 characters" +
+                                                                 " long, and can only contains alphanumeric characters" +
+                                                                 " or underscores"));
+        if (!Utilities.Utilities.CheckPassword(dto.Password))
+            return BadRequest(new ErrorResultDto("format_error", "invalid password format : password " +
+                                                                 "must be at least 5 characters long and contains " +
+                                                                 "letters and numbers"));
         if (dto.Password.Length < 5)
             return BadRequest(new ErrorResultDto("format_error", "password must have at least 5 characters"));
 
@@ -70,11 +79,14 @@ public class AuthController : ControllerBase
         if (existingUser == null || !existingUser.CheckPassword(dto.Current)) 
             return BadRequest(new ErrorResultDto("user_login_error", "user does not exist or password is invalid"));
         
+        if (!Utilities.Utilities.CheckPassword(dto.New))
+            return BadRequest(new ErrorResultDto("format_error", "invalid password format : password " +
+                                                                 "must be at least 5 characters long and contains " +
+                                                                 "letters and numbers"));
+        
         existingUser.SetPassword(dto.New);
-        db.ExpireUserTokens(existingUser);
-
         db.Update(existingUser);
-        db.SaveChanges();
+        db.ExpireUserTokens(existingUser);
 
         return Ok();
     }

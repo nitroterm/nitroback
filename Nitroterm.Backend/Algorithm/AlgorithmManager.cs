@@ -23,4 +23,16 @@ public static class AlgorithmManager
             .OrderByDescending(post => post.NitroLevel)
             .ToArray();
     }
+
+    public static Post[] DeduceBestPostsFromUser(User user, int count)
+    {
+        using NitrotermDbContext db = new();
+
+        return db.Posts
+            .Include(post => post.Sender)
+            .Where(post => post.Sender == user)
+            .Take(count)
+            .OrderByDescending(post => post.NitroLevel)
+            .ToArray();
+    }
 }

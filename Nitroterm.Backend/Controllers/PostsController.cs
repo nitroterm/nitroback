@@ -22,16 +22,10 @@ public class PostsController : ControllerBase
         User? user = this.GetUser();
         if (user == null) return Forbid();
 
-        if (string.IsNullOrWhiteSpace(postDto.Contents))
+        if (!Utilities.Utilities.CheckUserContent(postDto.Contents))
         {
             return BadRequest(new ErrorResultDto("invalid_format",
-                "message format is invalid"));
-        }
-
-        if (postDto.Contents.Length > 4000)
-        {
-            return BadRequest(new ErrorResultDto("too_large",
-                "message length must be less than 4000 characters"));
+                "message format is invalid : must be less than 4000 characters"));
         }
 
         Post post = new()
@@ -70,13 +64,16 @@ public class PostsController : ControllerBase
         Post? post = db.GetPost(id);
         if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
         if (post.Sender.Id != user.Id) return NotFound(new ErrorResultDto("unauthorized", "this post doesn't belong to you"));
-
-        if (!string.IsNullOrWhiteSpace(dto.Contents))
+        
+        if (!Utilities.Utilities.CheckUserContent(dto.Contents))
         {
-            post.Message = dto.Contents;
-            post.LastEditionTimestamp = DateTime.Now;
-            post.Edited = true;
+            return BadRequest(new ErrorResultDto("invalid_format",
+                "message format is invalid : must be less than 4000 characters"));
         }
+        
+        post.Message = dto.Contents;
+        post.LastEditionTimestamp = DateTime.Now;
+        post.Edited = true;
 
         db.Update(post);
         db.SaveChanges();
