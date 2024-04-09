@@ -26,6 +26,15 @@ public class UsersController : ControllerBase
 
         return new ResultDto<UserDto?>(new UserDto(dbUser));
     }
+    
+    [HttpGet("/api/nitroterm/v1/user")]
+    [Authorize]
+    public object GetLoginUser()
+    {
+        using NitrotermDbContext db = new();
+
+        return new ResultDto<UserDto?>(new UserDto(this.GetUser()!));
+    }
 
     [HttpPut("/api/nitroterm/v1/user")]
     [Authorize]
