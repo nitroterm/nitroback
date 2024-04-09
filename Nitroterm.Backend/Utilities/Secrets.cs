@@ -23,4 +23,5 @@ public class SecretsInstance
 {
     public string ConnectionString { get; set; }
     public string JwtKey { get; set; }
+    public string ReCaptcha { get; set; }
 }

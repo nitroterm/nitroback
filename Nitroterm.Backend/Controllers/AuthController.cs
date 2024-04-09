@@ -26,6 +26,11 @@ public class AuthController : ControllerBase
     {
         using NitrotermDbContext db = new();
 
+        if (dto.ReCaptchaChallenge == null || !ReCaptcha.Verify(dto.ReCaptchaChallenge))
+        {
+            return BadRequest(new ErrorResultDto("recaptcha_error", "recaptcha check failed"));
+        }
+
         if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Password))
             return BadRequest(new ErrorResultDto("format_error", "username or/and password are empty"));
         
