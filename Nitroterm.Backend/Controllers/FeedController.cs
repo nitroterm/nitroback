@@ -12,7 +12,6 @@ namespace Nitroterm.Backend.Controllers;
 public class FeedController : ControllerBase
 {
     [HttpGet]
-    [Authorize]
     public object Get()
     {
         return new ResultDto<PostDto[]?>(AlgorithmManager.DeduceBestPostsForUser(this.GetUser()!, 15)

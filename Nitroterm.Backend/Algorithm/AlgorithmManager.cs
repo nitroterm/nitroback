@@ -12,15 +12,16 @@ public static class AlgorithmManager
         return sender.NitroLevel;
     }
 
-    public static Post[] DeduceBestPostsForUser(User user, int count)
+    public static Post[] DeduceBestPostsForUser(User? user, int count)
     {
         using NitrotermDbContext db = new();
-
+        
         return db.Posts
             .Include(post => post.Sender)
-            .Where(post => post.Sender != user)
+            .Where(post => post == null || post.Sender != user)
             .Take(count)
-            .OrderByDescending(post => post.NitroLevel)
+            .OrderByDescending(post => post.CreationTimestamp)
+            .ThenByDescending(post => post.NitroLevel)
             .ToArray();
     }
 
