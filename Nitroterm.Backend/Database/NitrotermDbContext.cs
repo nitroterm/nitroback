@@ -76,13 +76,13 @@ public class NitrotermDbContext : DbContext
 
     public void ExpireUserTokens(User user)
     {
-        Tokens.RemoveRange(user.Tokens);
+        Tokens.RemoveRange(user.Tokens.Where(token => token.Type == TokenType.AuthJwt));
         SaveChanges();
     }
 
-    public void AddToken(User user, string jti)
+    public void AddToken(User user, TokenType type, string value)
     {
-        Tokens.Add(new Token {UserId = user.Id, Value = jti});
+        Tokens.Add(new Token {UserId = user.Id, Value = value, Type = type});
         SaveChanges();
     }
 }

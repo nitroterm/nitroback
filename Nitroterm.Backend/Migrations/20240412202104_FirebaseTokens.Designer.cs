@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nitroterm.Backend.Database;
 
@@ -11,9 +12,11 @@ using Nitroterm.Backend.Database;
 namespace Nitroterm.Backend.Migrations
 {
     [DbContext(typeof(NitrotermDbContext))]
-    partial class NitrotermDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240412202104_FirebaseTokens")]
+    partial class FirebaseTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,6 +95,7 @@ namespace Nitroterm.Backend.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Device")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Type")

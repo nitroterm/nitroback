@@ -9,4 +9,5 @@ public class LoginDto
     [Required]
     public string Password { get; set; }
     public string? ReCaptchaChallenge { get; set; }
+    public string? FirebaseToken { get; set; }
 }

@@ -51,6 +51,11 @@ public class AuthController : ControllerBase
 
         User user = db.CreateUser(dto.Username, dto.Password);
         string token = user.IssueJwtToken(db);
+        user.LatestLoginTimestamp = DateTime.Now;
+        
+        if (dto.FirebaseToken != null && !db.Tokens.Any(token => token.Value == dto.FirebaseToken))
+            db.AddToken(user, TokenType.Firebase, dto.FirebaseToken);
+        
         db.Update(user);
         db.SaveChanges();
 
@@ -67,6 +72,9 @@ public class AuthController : ControllerBase
 
         string token = existingUser.IssueJwtToken(db);
         existingUser.LatestLoginTimestamp = DateTime.Now;
+        
+        if (dto.FirebaseToken != null && !db.Tokens.Any(token => token.Value == dto.FirebaseToken))
+            db.AddToken(existingUser, TokenType.Firebase, dto.FirebaseToken);
         
         db.Update(existingUser);
         db.SaveChanges();

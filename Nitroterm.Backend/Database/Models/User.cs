@@ -22,7 +22,7 @@ public class User
     public UserExecutionLevel Level { get; set; }
 
     public bool IsTokenJtiValid(string jti)
-        => Tokens.Any(token => token.Value == jti);
+        => Tokens.Any(token => token.Value == jti && token.Type == TokenType.AuthJwt);
 
     public void SetPassword(string password)
     {
@@ -44,7 +44,7 @@ public class User
             new("username", Username)
         };
         
-        db.AddToken(this, tokenJti);
+        db.AddToken(this, TokenType.AuthJwt, tokenJti);
 
         SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets.Instance.JwtKey));
         SigningCredentials creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
