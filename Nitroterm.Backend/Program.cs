@@ -21,7 +21,7 @@ catch (Exception e)
 FirebaseApp.Create(new AppOptions()
 {
     Credential = GoogleCredential.FromJson(Secrets.Instance.Firebase),
-    ProjectId = "nitroterm"
+    ProjectId = "nitroterm-be30d"
 });
 
 var builder = WebApplication.CreateBuilder(args);

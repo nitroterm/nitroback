@@ -71,7 +71,7 @@ public class User
         string[] tokens = GetFirebaseTokens(db);
         if (tokens.Length == 0) return;
         
-        await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(new MulticastMessage()
+        var v = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(new MulticastMessage()
         {
             Tokens = tokens,
             Notification = notification
