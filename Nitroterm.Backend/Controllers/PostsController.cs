@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FirebaseAdmin.Messaging;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nitroterm.Backend.Algorithm;
 using Nitroterm.Backend.Attributes;
@@ -39,7 +40,21 @@ public class PostsController : ControllerBase
 
         db.Posts.Update(post);
         db.SaveChanges();
+        
+        // Send notification to all mentioned users
+        string[] mentions = Utilities.Utilities.ParseMentions(post.Message);
+        foreach (string mention in mentions)
+        {
+            User? mentionedUser = db.Users.FirstOrDefault(user => user.Username == mention);
+            if (mentionedUser == null) continue;
 
+            mentionedUser.SendNotification(db, new Notification
+            {
+                Title = $"{post.Sender.DisplayName}",
+                Body = $"{post.Sender.DisplayName} mentioned you in their post"
+            });
+        }
+        
         return Ok(new ResultDto<PostDto?>(new PostDto(post)));
     }
 

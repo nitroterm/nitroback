@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using FirebaseAdmin.Messaging;
 using Microsoft.IdentityModel.Tokens;
 using Nitroterm.Backend.Utilities;
 
@@ -57,6 +58,21 @@ public class User
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string[] GetFirebaseTokens(NitrotermDbContext db)
+        => db.Tokens
+            .Where(token => token.UserId == Id && token.Type == TokenType.Firebase)
+            .Select(token => token.Value)
+            .ToArray();
+
+    public async void SendNotification(NitrotermDbContext db, Notification notification)
+    {
+        await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(new MulticastMessage()
+        {
+            Tokens = GetFirebaseTokens(db),
+            Notification = notification
+        });
     }
 }
 

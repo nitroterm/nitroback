@@ -23,4 +23,18 @@ public class Utilities
     public static bool CheckUserContent(string userContent)
         => userContent.Length < 4000
            && !string.IsNullOrWhiteSpace(userContent);
+
+    public static string[] ParseMentions(string input)
+    {
+        List<string> mentions = [];
+        
+        foreach (string word in input.Split(' '))
+        {
+            if (!word.StartsWith('@')) continue;
+            
+            mentions.Add(word.TrimStart('@'));
+        }
+
+        return mentions.ToArray();
+    }
 }
