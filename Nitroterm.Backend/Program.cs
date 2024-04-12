@@ -1,3 +1,5 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Nitroterm.Backend.Database;
@@ -15,6 +17,12 @@ catch (Exception e)
 {
     Console.WriteLine(e);
 }
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromJson(Secrets.Instance.Firebase),
+    ProjectId = "nitroterm"
+});
 
 var builder = WebApplication.CreateBuilder(args);
 

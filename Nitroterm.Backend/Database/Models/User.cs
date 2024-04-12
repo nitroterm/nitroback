@@ -68,9 +68,12 @@ public class User
 
     public async void SendNotification(NitrotermDbContext db, Notification notification)
     {
+        string[] tokens = GetFirebaseTokens(db);
+        if (tokens.Length == 0) return;
+        
         await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(new MulticastMessage()
         {
-            Tokens = GetFirebaseTokens(db),
+            Tokens = tokens,
             Notification = notification
         });
     }
