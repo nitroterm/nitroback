@@ -66,14 +66,15 @@ public class User
             .Select(token => token.Value)
             .ToArray();
 
-    public async void SendNotification(NitrotermDbContext db, Notification notification)
+    public async void SendNotification(NitrotermDbContext db, Notification notification, Dictionary<string, string> data)
     {
         string[] tokens = GetFirebaseTokens(db);
         if (tokens.Length == 0) return;
         
-        var v = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(new MulticastMessage()
+        await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(new MulticastMessage()
         {
             Tokens = tokens,
+            Data = data,
             Notification = notification
         });
     }

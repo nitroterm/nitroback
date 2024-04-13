@@ -52,6 +52,10 @@ public class PostsController : ControllerBase
             {
                 Title = $"{post.Sender.DisplayName}",
                 Body = $"{post.Sender.DisplayName} mentioned you in their post"
+            }, new Dictionary<string, string>
+            {
+                {"type", "post"},
+                {"post", post.PublicIdentifier.ToString()}
             });
         }
         
