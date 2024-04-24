@@ -36,4 +36,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Resources\default_profile_picture.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

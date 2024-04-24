@@ -13,6 +13,8 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/users")]
 public class UsersController : ControllerBase
 {
+    private static byte[] _defaultProfilePictureBytes;
+    
     [HttpGet("{username}")]
     [Authorize]
     public object Get(string username)
@@ -37,9 +39,15 @@ public class UsersController : ControllerBase
         User? dbUser = db.Users
             .Include(user => user.ProfilePicture)
             .FirstOrDefault(user => user.Username == username);
-        
-        if (dbUser == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
-        if (dbUser.ProfilePicture == null) return NotFound();
+
+        if (dbUser == null) return NotFound();
+        if (dbUser.ProfilePicture == null)
+        {
+            if (_defaultProfilePictureBytes == null)
+                _defaultProfilePictureBytes = System.IO.File.ReadAllBytes("Resources/default_profile_picture.png");
+
+            return File(_defaultProfilePictureBytes, "image/png");
+        }
 
         return File(dbUser.ProfilePicture!.Data, $"image/{dbUser.ProfilePicture.Format}");
     }
@@ -87,6 +95,25 @@ public class UsersController : ControllerBase
         db.SaveChanges();
 
         return new ResultDto<UserDto?>(new UserDto(user));
+    }
+    
+    [HttpGet("/api/nitroterm/v1/user/picture")]
+    [Authorize]
+    public object GetConnectedUserPicture()
+    {
+        using NitrotermDbContext db = new();
+
+        User user = this.GetUser()!;
+
+        if (user.ProfilePicture == null)
+        {
+            if (_defaultProfilePictureBytes == null)
+                _defaultProfilePictureBytes = System.IO.File.ReadAllBytes("Resources/default_profile_picture.png");
+
+            return File(_defaultProfilePictureBytes, "image/png");
+        }
+
+        return File(user.ProfilePicture!.Data, $"image/{user.ProfilePicture.Format}");
     }
 
     [HttpPost("/api/nitroterm/v1/user/picture")]
