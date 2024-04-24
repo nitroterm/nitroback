@@ -11,6 +11,7 @@ public class NitrotermDbContext : DbContext
     public DbSet<Post> Posts { get; set; }
     public DbSet<Token> Tokens { get; set; }
     public DbSet<UserToUserInteraction> UserToUserInteractions { get; set; }
+    public DbSet<Asset> Assets { get; set; }
 
     public NitrotermDbContext()
     {
@@ -25,12 +26,14 @@ public class NitrotermDbContext : DbContext
         => Users
             .Include(user => user.Product)
             .Include(user => user.Tokens)
+            .Include(user => user.ProfilePicture)
             .FirstOrDefault(user => user.Id == id);
 
     public User? GetUser(string username)
         => Users
             .Include(user => user.Product)
             .Include(user => user.Tokens)
+            .Include(user => user.ProfilePicture)
             .FirstOrDefault(user => user.Username == username);
 
     public Post? GetPost(Guid publicId)

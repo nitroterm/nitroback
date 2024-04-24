@@ -5,6 +5,7 @@ using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Database.Models;
 using Nitroterm.Backend.Dto;
 using Nitroterm.Backend.Utilities;
+using SixLabors.ImageSharp;
 
 namespace Nitroterm.Backend.Controllers;
 
@@ -12,7 +13,7 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/users")]
 public class UsersController : ControllerBase
 {
-    [HttpGet("/api/nitroterm/v1/user/{username}")]
+    [HttpGet("{username}")]
     [Authorize]
     public object Get(string username)
     {
@@ -25,6 +26,22 @@ public class UsersController : ControllerBase
         if (dbUser == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
 
         return new ResultDto<UserDto?>(new UserDto(dbUser));
+    }
+    
+    [HttpGet("{username}/picture")]
+    [Authorize]
+    public object GetUserPicture(string username)
+    {
+        using NitrotermDbContext db = new();
+
+        User? dbUser = db.Users
+            .Include(user => user.ProfilePicture)
+            .FirstOrDefault(user => user.Username == username);
+        
+        if (dbUser == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
+        if (dbUser.ProfilePicture == null) return NotFound();
+
+        return File(dbUser.ProfilePicture!.Data, $"image/{dbUser.ProfilePicture.Format}");
     }
     
     [HttpGet("/api/nitroterm/v1/user")]
@@ -68,6 +85,53 @@ public class UsersController : ControllerBase
 
         db.Update(user);
         db.SaveChanges();
+
+        return new ResultDto<UserDto?>(new UserDto(user));
+    }
+
+    [HttpPost("/api/nitroterm/v1/user/picture")]
+    [Authorize]
+    public object EditProfilePicture(IFormFile file)
+    {
+        using NitrotermDbContext db = new();
+        User user = this.GetUser()!;
+        
+        Stream fileStream = file.OpenReadStream();
+        byte[] data = new byte[fileStream.Length];
+
+        int newSize = fileStream.Read(data, 0, data.Length);
+        Array.Resize(ref data, newSize);
+
+        Image? image;
+        try
+        {
+            image = Image.Load(data);
+            if (image == null) return BadRequest(new ErrorResultDto("bad_format", "bad image format"));
+            
+            if (image.Width > 1024 || image.Height > 1024)
+                return BadRequest(new ErrorResultDto("bad_format", "image must be in 1024x1024 maximum"));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(new ErrorResultDto("bad_format", "bad image format"));
+        }
+
+        Asset asset = user.ProfilePicture ?? new Asset
+        {
+            Format = Path.GetExtension(file.FileName).TrimStart('.'),
+            Data = data,
+            Width = image.Width,
+            Height = image.Height
+        };
+
+        user.ProfilePicture = asset;
+
+        db.Update(asset);
+        db.Update(user);
+        db.SaveChanges();
+        
+        image.Dispose();
 
         return new ResultDto<UserDto?>(new UserDto(user));
     }

@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 using FirebaseAdmin.Messaging;
 using Microsoft.IdentityModel.Tokens;
 using Nitroterm.Backend.Utilities;
@@ -21,7 +22,10 @@ public class User
     public DateTime CreationTimestamp { get; set; }
     public DateTime? LatestLoginTimestamp { get; set; }
     public UserExecutionLevel Level { get; set; }
+    public Asset? ProfilePicture { get; set; }
 
+    [JsonIgnore] public string ProfilePictureUrl => $"/api/nitroterm/v1/users/{Username}/picture";
+    
     public bool IsTokenJtiValid(string jti)
         => Tokens.Any(token => token.Value == jti && token.Type == TokenType.AuthJwt);
 
