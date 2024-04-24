@@ -16,7 +16,6 @@ public class UsersController : ControllerBase
     private static byte[] _defaultProfilePictureBytes;
     
     [HttpGet("{username}")]
-    [Authorize]
     public object Get(string username)
     {
         using NitrotermDbContext db = new();
@@ -31,7 +30,6 @@ public class UsersController : ControllerBase
     }
     
     [HttpGet("{username}/picture")]
-    [Authorize]
     public object GetUserPicture(string username)
     {
         using NitrotermDbContext db = new();
