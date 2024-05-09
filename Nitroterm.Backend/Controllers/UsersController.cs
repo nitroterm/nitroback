@@ -50,13 +50,15 @@ public class UsersController : ControllerBase
         using NitrotermDbContext db = new();
 
         User? userToFollow = db.Users
-            .Include(user => user.Product)
             .FirstOrDefault(user => user.Username == username);
         User sourceUser = this.GetUser()!;
         
         if (userToFollow == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
 
-        db.InteractWithUser(sourceUser, userToFollow, UserToUserInteractionType.Follow);
+        if (!db.InteractWithUser(sourceUser, userToFollow, UserToUserInteractionType.Follow))
+        {
+            db.InteractWithUser(sourceUser, userToFollow, UserToUserInteractionType.None);
+        }
 
         return new ResultDto<UserDto?>(new UserDto(userToFollow));
     }

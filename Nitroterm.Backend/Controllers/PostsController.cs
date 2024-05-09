@@ -140,7 +140,10 @@ public class PostsController : ControllerBase
         if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
 
         if (!db.InteractWithPost(user, post, UserToPostInteractionType.Nitro))
-            return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
+        {
+            if (!db.InteractWithPost(user, post, UserToPostInteractionType.None))
+                return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
+        }
         
         return new ResultDto<PostDto?>(new PostDto(post));
     }
@@ -164,7 +167,10 @@ public class PostsController : ControllerBase
         if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
 
         if (!db.InteractWithPost(user, post, UserToPostInteractionType.Dynamite))
-            return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
+        {
+            if (!db.InteractWithPost(user, post, UserToPostInteractionType.None))
+                return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
+        }
         
         return new ResultDto<PostDto?>(new PostDto(post));
     }

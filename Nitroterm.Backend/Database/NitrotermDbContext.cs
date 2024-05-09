@@ -72,7 +72,7 @@ public class NitrotermDbContext : DbContext
         => UserToUserInteractions
             .Include(userToUser => userToUser.SourceUser)
             .Include(userToUser => userToUser.TargetUser)
-            .Where(userToUser => userToUser.SourceUser == sourceUser && userToUser.TargetUser == targetUser)
+            .Where(userToUser => userToUser.SourceUser.Id == sourceUser.Id && userToUser.TargetUser.Id == targetUser.Id)
             .ToArray();
 
     public bool ClearPostInteractions(User sourceUser, Post post)
@@ -84,14 +84,23 @@ public class NitrotermDbContext : DbContext
         if (pastOtherInteractions.Any(interaction => interaction.Type == type))
             return false;
 
-        if (type != UserToPostInteractionType.None)
+        if (pastOtherInteractions.Any())
         {
-            UserToPostInteraction interaction = pastOtherInteractions.FirstOrDefault() ?? new UserToPostInteraction();
-            interaction.Post = post;
-            interaction.SourceUser = sourceUser;
+            UserToPostInteraction interaction = pastOtherInteractions.FirstOrDefault()!;
             interaction.Type = type;
-
-            UserToPostInteractions.Update(interaction);
+            
+            Update(interaction);
+        }
+        else
+        {
+            UserToPostInteraction interaction = new UserToPostInteraction()
+            {
+                Post = post,
+                SourceUser = sourceUser,
+                Type = type
+            };
+            
+            Update(interaction);
         }
 
         SaveChanges();
@@ -104,13 +113,18 @@ public class NitrotermDbContext : DbContext
 
     public bool InteractWithUser(User sourceUser, User targetUser, UserToUserInteractionType type)
     {
-        UserToUserInteraction[] pastOtherInteractions = GetInteractionsForUser(sourceUser, targetUser)
-            .Where(interaction => interaction.Type != type)
-            .ToArray();
-        if (pastOtherInteractions.Any())
-            UserToUserInteractions.RemoveRange(pastOtherInteractions);
+        UserToUserInteraction[] pastOtherInteractions = GetInteractionsForUser(sourceUser, targetUser).ToArray();
+        if (pastOtherInteractions.Any(interaction => interaction.Type == type))
+            return false;
 
-        if (type != UserToUserInteractionType.None)
+        if (pastOtherInteractions.Any())
+        {
+            UserToUserInteraction interaction = pastOtherInteractions.FirstOrDefault()!;
+            interaction.Type = type;
+            
+            Update(interaction);
+        }
+        else
         {
             UserToUserInteraction interaction = new UserToUserInteraction()
             {
@@ -118,7 +132,8 @@ public class NitrotermDbContext : DbContext
                 TargetUser = targetUser,
                 Type = type
             };
-            UserToUserInteractions.Update(interaction);
+            
+            Update(interaction);
         }
 
         SaveChanges();
