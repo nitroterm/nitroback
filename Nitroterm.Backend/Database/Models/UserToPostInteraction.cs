@@ -4,17 +4,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Nitroterm.Backend.Database.Models;
 
-public class UserToUserInteraction
+public class UserToPostInteraction
 {
     public int Id { get; set; }
     public User SourceUser { get; set; }
-    public User TargetUser { get; set; }
-    public UserToUserInteractionType Type { get; set; }
+    public Post Post { get; set; }
+    public UserToPostInteractionType Type { get; set; }
 }
 
-public enum UserToUserInteractionType
+public enum UserToPostInteractionType
 {
     None,
-    Follow,
-    Block
+    Nitro,
+    Dynamite
 }

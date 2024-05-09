@@ -100,6 +100,38 @@ public class PostsController : ControllerBase
         return new ResultDto<PostDto?>(new PostDto(post));
     }
 
+    [HttpPost("{id:guid}/nitronize")]
+    [Authorize]
+    public object NitronizePost(Guid id)
+    {
+        using NitrotermDbContext db = new();
+        User user = this.GetUser()!;
+        
+        Post? post = db.GetPost(id);
+        if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
+
+        if (!db.InteractWithPost(user, post, UserToPostInteractionType.Nitro))
+            return new ErrorResultDto("duplicate_interaction", "interaction is duplicate");
+        
+        return new ResultDto<PostDto?>(new PostDto(post));
+    }
+
+    [HttpPost("{id:guid}/dynamite")]
+    [Authorize]
+    public object DynamitePost(Guid id)
+    {
+        using NitrotermDbContext db = new();
+        User user = this.GetUser()!;
+        
+        Post? post = db.GetPost(id);
+        if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
+
+        if (!db.InteractWithPost(user, post, UserToPostInteractionType.Dynamite))
+            return new ErrorResultDto("duplicate_interaction", "interaction is duplicate");
+        
+        return new ResultDto<PostDto?>(new PostDto(post));
+    }
+
     [HttpDelete("{id:guid}")]
     [Authorize]
     public object Delete(Guid id)

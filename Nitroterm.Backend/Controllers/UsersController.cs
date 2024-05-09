@@ -29,6 +29,24 @@ public class UsersController : ControllerBase
         return new ResultDto<UserDto?>(new UserDto(dbUser));
     }
     
+    [HttpPost("{username}/follow")]
+    [Authorize]
+    public object FollowUser(string username)
+    {
+        using NitrotermDbContext db = new();
+
+        User? userToFollow = db.Users
+            .Include(user => user.Product)
+            .FirstOrDefault(user => user.Username == username);
+        User sourceUser = this.GetUser()!;
+        
+        if (userToFollow == null) return NotFound(new ErrorResultDto("not_found", "user not found"));
+
+        db.InteractWithUser(sourceUser, userToFollow, UserToUserInteractionType.Follow);
+
+        return new ResultDto<UserDto?>(new UserDto(userToFollow));
+    }
+    
     [HttpGet("{username}/picture")]
     public object GetUserPicture(string username)
     {

@@ -37,4 +37,18 @@ public class Utilities
 
         return mentions.ToArray();
     }
+
+    public static string[] ParseTags(string input)
+    {
+        List<string> mentions = [];
+        
+        foreach (string word in input.Split(' '))
+        {
+            if (!word.StartsWith('#')) continue;
+            
+            mentions.Add(word.TrimStart('#'));
+        }
+
+        return mentions.ToArray();
+    }
 }
