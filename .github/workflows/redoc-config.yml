@@ -1,0 +1,14 @@
+theme:
+  openapi:
+    generateCodeSamples:
+      languages:
+        - lang: curl
+        - lang: JavaScript
+        - lang: C#
+    theme:
+      sidebar:
+        textColor: 'white'
+        backgroundColor: '#080016'
+      rightPanel:
+        textColor: 'white'
+        backgroundColor: '#290D59'
