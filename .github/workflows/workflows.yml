@@ -1,0 +1,20 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Generate Redoc Docs
+        uses: seeebiii/redoc-cli-github-action@v10
+        with:
+          args: 'bundle Nitroterm.Backend/Nitroterm.Backend.json -o docs/index.html'
