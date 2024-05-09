@@ -23,7 +23,7 @@ jobs:
       - name: Generate Redoc Docs
         uses: seeebiii/redoc-cli-github-action@v10
         with:
-          args: 'bundle Nitroterm.Backend/Nitroterm.Backend.json -o docs/index.html'
+          args: 'bundle Nitroterm.Backend/Nitroterm.Backend.json -o docs/index.html --theme.openapi.theme.sidebar.backgroundColor "#080016" --theme.openapi.theme.sidebar.textColor "white" --theme.openapi.theme.rightPanel.backgroundColor "#290D59" --theme.openapi.theme.rightPanel.textColor "white"'
           
       - name: Commit files
         run: |

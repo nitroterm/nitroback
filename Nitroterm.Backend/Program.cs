@@ -1,6 +1,7 @@
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Middleware;
@@ -46,7 +47,16 @@ builder.Services.AddSwaggerGen(c =>
         new OpenApiInfo
         {
             Title = "Nitroterm.Backend",
-            Version = "v1"
+            Version = "v1",
+            Extensions = new Dictionary<string, IOpenApiExtension>()
+            {
+                {
+                    "x-logo",
+                    new LogoExtension(
+                        "https://raw.githubusercontent.com/nitroterm/nitrofront/main/src/components/img/logo.png",
+                        "#080016", "nitroterm logo")
+                }
+            }
         }
     );
 
@@ -70,7 +80,7 @@ builder.Services.AddSwaggerGen(c =>
             Type = ReferenceType.SecurityScheme
         }
     };
-    
+
     c.AddServer(new OpenApiServer()
     {
         Description = "Local Server",
@@ -81,7 +91,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Production Server",
         Url = "https://services.cacahuete.dev"
     });
-    
+
     c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {

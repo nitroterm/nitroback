@@ -2,7 +2,12 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Nitroterm.Backend",
-    "version": "v1"
+    "version": "v1",
+    "x-logo": {
+      "url": "https://raw.githubusercontent.com/nitroterm/nitrofront/main/src/components/img/logo.png",
+      "backgroundColor": "#080016",
+      "altText": "nitroterm logo"
+    }
   },
   "servers": [
     {
