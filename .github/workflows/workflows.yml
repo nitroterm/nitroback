@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Generate Backend Documentation
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
       - name: Generate Redoc Docs
         uses: seeebiii/redoc-cli-github-action@v10
         with:
-          args: 'bundle Nitroterm.Backend/Nitroterm.Backend.json -o docs/index.html --config=.github/workflows/redoc-config.yml'
+          args: 'bundle Nitroterm.Backend/Nitroterm.Backend.json -o docs/index.html'
           
       - name: Commit files
         run: |
@@ -36,5 +36,5 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.head_ref }}
+          branch: docs
             
