@@ -12,6 +12,12 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/auth")]
 public class AuthController : ControllerBase
 {
+    /// <summary>
+    /// Validate a user authentication token
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<UserDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet("validate")]
     [Authorize]
     public object Validate()
@@ -21,6 +27,12 @@ public class AuthController : ControllerBase
         return Ok(new ResultDto<UserDto?>(new UserDto(user)));
     }
     
+    /// <summary>
+    /// Register an account
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<LoginResponseDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("register")]
     public object Register([FromBody] LoginDto dto)
     {
@@ -62,6 +74,12 @@ public class AuthController : ControllerBase
         return Ok(new ResultDto<LoginResponseDto?>(new LoginResponseDto(new UserDto(user), token)));
     }
     
+    /// <summary>
+    /// Login to an account
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<LoginResponseDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("login")]
     public object Login([FromBody] LoginDto dto)
     {
@@ -82,6 +100,13 @@ public class AuthController : ControllerBase
         return Ok(new ResultDto<LoginResponseDto?>(new LoginResponseDto(new UserDto(existingUser), token)));
     }
     
+    /// <summary>
+    /// Change the current user's password
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("password")]
     [Authorize]
     public object ChangePassword([FromBody] ChangePasswordDto dto)
@@ -104,6 +129,13 @@ public class AuthController : ControllerBase
         return Ok();
     }
     
+    /// <summary>
+    /// Logout from the current account
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("logout")]
     [Authorize]
     public object Logout()
@@ -115,6 +147,6 @@ public class AuthController : ControllerBase
         
         db.ExpireUserTokens(existingUser);
 
-        return Ok(new ResultDto<string>());
+        return Ok();
     }
 }

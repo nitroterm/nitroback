@@ -15,6 +15,13 @@ public class UsersController : ControllerBase
 {
     private static byte[] _defaultProfilePictureBytes;
     
+    /// <summary>
+    /// Get a user
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<UserDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet("{username}")]
     public object Get(string username)
     {
@@ -29,6 +36,13 @@ public class UsersController : ControllerBase
         return new ResultDto<UserDto?>(new UserDto(dbUser));
     }
     
+    /// <summary>
+    /// Get a user
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<UserDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpPost("{username}/follow")]
     [Authorize]
     public object FollowUser(string username)
@@ -47,6 +61,13 @@ public class UsersController : ControllerBase
         return new ResultDto<UserDto?>(new UserDto(userToFollow));
     }
     
+    /// <summary>
+    /// Get a user's profile picture
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(FileContentResult), 200, "image/png")]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet("{username}/picture")]
     public object GetUserPicture(string username)
     {
@@ -68,6 +89,12 @@ public class UsersController : ControllerBase
         return File(dbUser.ProfilePicture!.Data, $"image/{dbUser.ProfilePicture.Format}");
     }
     
+    /// <summary>
+    /// Get the current logged-in user
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<UserDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet("/api/nitroterm/v1/user")]
     [Authorize]
     public object GetLoginUser()
@@ -77,6 +104,13 @@ public class UsersController : ControllerBase
         return new ResultDto<UserDto?>(new UserDto(this.GetUser()!));
     }
 
+    /// <summary>
+    /// Edit a user's profile
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<UserDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPut("/api/nitroterm/v1/user")]
     [Authorize]
     public object Put([FromBody] UserEditDto dto)
@@ -112,7 +146,13 @@ public class UsersController : ControllerBase
 
         return new ResultDto<UserDto?>(new UserDto(user));
     }
-    
+
+    /// <summary>
+    /// Get the current connected user's profile picture
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(FileContentResult), 200, "image/png")]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet("/api/nitroterm/v1/user/picture")]
     [Authorize]
     public object GetConnectedUserPicture()
@@ -132,6 +172,13 @@ public class UsersController : ControllerBase
         return File(user.ProfilePicture!.Data, $"image/{user.ProfilePicture.Format}");
     }
 
+    /// <summary>
+    /// Edit the current user's profile picture
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<UserDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("/api/nitroterm/v1/user/picture")]
     [Authorize]
     public object EditProfilePicture(IFormFile file)

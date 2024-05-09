@@ -12,6 +12,13 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/products")]
 public class ProductsController : ControllerBase
 {
+    /// <summary>
+    /// Create a product (admin only)
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<ProductDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpPost("/api/nitroterm/v1/products")]
     [Authorize]
     public object Create([FromBody] ProductEditDto dto)
@@ -44,6 +51,13 @@ public class ProductsController : ControllerBase
         return new ResultDto<ProductDto?>(new ProductDto(product));
     }
     
+    /// <summary>
+    /// Get a product
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<ProductDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet("/api/nitroterm/v1/product/{id:int}")]
     [Authorize]
     public object Get(int id)
@@ -56,6 +70,12 @@ public class ProductsController : ControllerBase
         return new ResultDto<ProductDto?>(new ProductDto(product));
     }
 
+    /// <summary>
+    /// Get the 10 first products
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<ProductDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet]
     [Authorize]
     public object GetProducts()
@@ -67,6 +87,12 @@ public class ProductsController : ControllerBase
         return new ResultDto<Product[]?>(products);
     }
 
+    /// <summary>
+    /// Query products
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<ProductDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpGet("/api/nitroterm/v1/products/query/{input}")]
     [Authorize]
     public object QueryProducts(string input)

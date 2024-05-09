@@ -6,7 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)</OpenApiDocumentsDirectory>
         <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
         <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>

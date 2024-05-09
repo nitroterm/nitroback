@@ -42,6 +42,20 @@ builder.Services.AddCors(options =>
 #if DEBUG
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SwaggerDoc("v1",
+        new OpenApiInfo
+        {
+            Title = "Nitroterm.Backend",
+            Version = "v1"
+        }
+    );
+
+    var filePath = Path.Combine(System.AppContext.BaseDirectory, "Nitroterm.Backend.xml");
+    c.IncludeXmlComments(filePath);
+});
+
+builder.Services.AddSwaggerGen(c =>
+{
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "JWT Authentication",
@@ -56,6 +70,18 @@ builder.Services.AddSwaggerGen(c =>
             Type = ReferenceType.SecurityScheme
         }
     };
+    
+    c.AddServer(new OpenApiServer()
+    {
+        Description = "Local Server",
+        Url = "http://localhost:5168"
+    });
+    c.AddServer(new OpenApiServer()
+    {
+        Description = "Production Server",
+        Url = "https://services.cacahuete.dev"
+    });
+    
     c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {

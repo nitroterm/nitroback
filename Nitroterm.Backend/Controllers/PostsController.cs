@@ -14,6 +14,13 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/posts")]
 public class PostsController : ControllerBase
 {
+    /// <summary>
+    /// Create a post
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<PostDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("/api/nitroterm/v1/post")]
     [Authorize]
     public object CreatePost([FromBody] PostCreationDto postDto)
@@ -62,6 +69,13 @@ public class PostsController : ControllerBase
         return Ok(new ResultDto<PostDto?>(new PostDto(post)));
     }
 
+    /// <summary>
+    /// Get a post
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<PostDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
     [HttpGet("{id:guid}")]
     public object GetPost(Guid id)
     {
@@ -73,6 +87,13 @@ public class PostsController : ControllerBase
         return Ok(new ResultDto<PostDto?>(new PostDto(post)));
     }
 
+    /// <summary>
+    /// Update a post
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<PostDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
     [HttpPut("{id:guid}")]
     [Authorize]
     public object Put(Guid id, [FromBody] PostCreationDto dto)
@@ -100,6 +121,14 @@ public class PostsController : ControllerBase
         return new ResultDto<PostDto?>(new PostDto(post));
     }
 
+    /// <summary>
+    /// Nitronize (upvote) a post
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<PostDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("{id:guid}/nitronize")]
     [Authorize]
     public object NitronizePost(Guid id)
@@ -111,11 +140,19 @@ public class PostsController : ControllerBase
         if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
 
         if (!db.InteractWithPost(user, post, UserToPostInteractionType.Nitro))
-            return new ErrorResultDto("duplicate_interaction", "interaction is duplicate");
+            return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
         
         return new ResultDto<PostDto?>(new PostDto(post));
     }
 
+    /// <summary>
+    /// Dynamite (downvote) a post
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<PostDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpPost("{id:guid}/dynamite")]
     [Authorize]
     public object DynamitePost(Guid id)
@@ -127,11 +164,19 @@ public class PostsController : ControllerBase
         if (post == null) return NotFound(new ErrorResultDto("not_found", "post not found"));
 
         if (!db.InteractWithPost(user, post, UserToPostInteractionType.Dynamite))
-            return new ErrorResultDto("duplicate_interaction", "interaction is duplicate");
+            return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
         
         return new ResultDto<PostDto?>(new PostDto(post));
     }
 
+    /// <summary>
+    /// Delete a post
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<PostDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 404)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [ProducesResponseType(typeof(ErrorResultDto), 400)]
     [HttpDelete("{id:guid}")]
     [Authorize]
     public object Delete(Guid id)
