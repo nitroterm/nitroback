@@ -19,7 +19,7 @@ public class BruteforceProtectionMiddleware(RequestDelegate next)
             _accesses.Add(remoteIpAddress, new RemoteAddressAccess(1, DateTime.Now));
         }
 
-        if (access != null && access.AccessCount > 10 && access.LastAccessTimeSince.TotalSeconds < 2f)
+        if (access != null && access.AccessCount > 50 && access.LastAccessTimeSince.TotalSeconds < 5f)
         {
             access.LastAccessTime = DateTime.Now;
             _accesses[remoteIpAddress] = access; // to be sure
