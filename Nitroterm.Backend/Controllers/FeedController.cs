@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net.WebSockets;
+using Microsoft.AspNetCore.Mvc;
 using Nitroterm.Backend.Algorithm;
 using Nitroterm.Backend.Attributes;
 using Nitroterm.Backend.Database.Models;
