@@ -112,7 +112,7 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 app.UseHttpsRedirection();
 app.UseCors("cors");
-app.UseMiddleware<BruteforceProtectionMiddleware>();
+//app.UseMiddleware<BruteforceProtectionMiddleware>();
 app.UseMiddleware<JwtMiddleware>();
 
 app.Run();
