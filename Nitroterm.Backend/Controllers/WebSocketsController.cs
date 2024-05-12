@@ -1,5 +1,8 @@
 ﻿using System.Net.WebSockets;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using Nitroterm.Backend.Database.Models.WebSockets;
+using Nitroterm.Backend.Services;
 
 namespace Nitroterm.Backend.Controllers;
 
@@ -7,43 +10,26 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/ws")]
 public class WebSocketsController : ControllerBase
 {
-    private List<WebSocket> _feedWebSockets = [];
+    private IEventService _ws;
+    public WebSocketsController(IEventService ws)
+    {
+        _ws = ws;
+    }
     
     [HttpGet("feed")]
     public async Task OpenFeedWebSocket()
     {
+        HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+        return;
+        
         if (HttpContext.WebSockets.IsWebSocketRequest)
         {
-            using var webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            _feedWebSockets.Add(webSocket);
+            WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            _ws.RegisterWebSocket(webSocket);
 
             return;
         }
-        
+
         HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-    }
-    
-    private static async Task ProcessWebSocket(WebSocket webSocket)
-    {
-        var buffer = new byte[1024 * 4];
-        var receiveResult = await webSocket.ReceiveAsync(
-            new ArraySegment<byte>(buffer), CancellationToken.None);
-
-        while (!receiveResult.CloseStatus.HasValue)
-        {
-            await webSocket.SendAsync(
-                new ArraySegment<byte>(buffer, 0, receiveResult.Count),
-                receiveResult.MessageType,
-                receiveResult.EndOfMessage,
-                CancellationToken.None);
-
-            receiveResult = await webSocket.ReceiveAsync(
-                new ArraySegment<byte>(buffer), CancellationToken.None);
-        }
-
-        await webSocket.CloseAsync(
-            receiveResult.CloseStatus.Value,
-            receiveResult.CloseStatusDescription,
-            CancellationToken.None);
     }
 }

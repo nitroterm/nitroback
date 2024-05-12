@@ -5,7 +5,9 @@ using Nitroterm.Backend.Algorithm;
 using Nitroterm.Backend.Attributes;
 using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Database.Models;
+using Nitroterm.Backend.Database.Models.WebSockets;
 using Nitroterm.Backend.Dto;
+using Nitroterm.Backend.Services;
 using Nitroterm.Backend.Utilities;
 
 namespace Nitroterm.Backend.Controllers;
@@ -14,6 +16,12 @@ namespace Nitroterm.Backend.Controllers;
 [Route("/api/nitroterm/v1/posts")]
 public class PostsController : ControllerBase
 {
+    private IEventService _wsController;
+    public PostsController(IEventService wsController)
+    {
+        _wsController = wsController;
+    }
+    
     /// <summary>
     /// Create a post
     /// </summary>
@@ -144,6 +152,9 @@ public class PostsController : ControllerBase
             if (!db.InteractWithPost(user, post, UserToPostInteractionType.None))
                 return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
         }
+
+        WebSocketEvent<PostDto> wsEvent = new("post_update", new PostDto(post));
+        _wsController.SendEvent(wsEvent);
         
         return new ResultDto<PostDto?>(new PostDto(post));
     }
@@ -171,6 +182,9 @@ public class PostsController : ControllerBase
             if (!db.InteractWithPost(user, post, UserToPostInteractionType.None))
                 return BadRequest(new ErrorResultDto("duplicate_interaction", "interaction is duplicate"));
         }
+
+        WebSocketEvent<PostDto> wsEvent = new("post_update", new PostDto(post));
+        _wsController.SendEvent(wsEvent);
         
         return new ResultDto<PostDto?>(new PostDto(post));
     }

@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Nitroterm.Backend.Database;
 using Nitroterm.Backend.Middleware;
+using Nitroterm.Backend.Services;
 using Nitroterm.Backend.Utilities;
 
 Secrets.Load();
@@ -40,6 +41,9 @@ builder.Services.AddCors(options =>
         policy.AllowAnyMethod();
     });
 });
+
+builder.Services.AddSingleton<IEventService, WebSocketsService>();
+
 #if DEBUG
 builder.Services.AddSwaggerGen(c =>
 {
@@ -110,6 +114,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
+app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseCors("cors");
 //app.UseMiddleware<BruteforceProtectionMiddleware>();
