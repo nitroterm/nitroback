@@ -25,4 +25,5 @@ public class SecretsInstance
     public string JwtKey { get; set; }
     public string ReCaptcha { get; set; }
     public string Firebase { get; set; }
+    public string AdminKey { get; set; }
 }

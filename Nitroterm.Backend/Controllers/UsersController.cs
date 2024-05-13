@@ -227,4 +227,28 @@ public class UsersController : ControllerBase
 
         return new ResultDto<UserDto?>(new UserDto(user));
     }
+
+    /// <summary>
+    /// Promote the current user as admin (protected)
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(typeof(ResultDto<UserDto?>), 200)]
+    [ProducesResponseType(typeof(ErrorResultDto), 401)]
+    [HttpPost("/api/nitroterm/v1/user/promote")]
+    [Authorize]
+    public object Promote([FromBody] string adminKey)
+    {
+        if (string.IsNullOrWhiteSpace(Secrets.Instance.AdminKey) 
+            || adminKey != Secrets.Instance.AdminKey) return Unauthorized();
+        
+        using NitrotermDbContext db = new();
+        
+        User user = this.GetUser()!;
+        user.Level = UserExecutionLevel.Administrator;
+
+        db.Update(user);
+        db.SaveChanges();
+
+        return new ResultDto<UserDto?>(new UserDto(user));
+    }
 }
