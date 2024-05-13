@@ -18,6 +18,7 @@ public static class AlgorithmManager
         
         return db.Posts
             .Include(post => post.Sender)
+            .Include(post => post.Sender.Product)
             .Where(post => post == null || post.Sender != user)
             .Take(count)
             .OrderByDescending(post => post.CreationTimestamp)
